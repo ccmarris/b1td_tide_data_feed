@@ -23,7 +23,7 @@
 
  Author: Chris Marrison
 
- Date Last Updated: 20190607
+ Date Last Updated: 20200415
 
  .. todo::
     * Alternate feed formats
@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '0.7'
+__version__ = '0.8'
 __author__ = 'Chris Marrison'
 
 import os
@@ -130,9 +130,7 @@ def parseargs():
     parse.add_argument('-t', '--threatclass', type=str,
                        help="Specify Threat Class for feed")
     parse.add_argument('-T', '--threatproperty', type=str,
-                       default='MalwareC2_Generic',
-                       help="Specify Threat Property for "
-                       "feed (default=MalwareC2_Generic)")
+                       help="Specify Threat Property for feed")
     parse.add_argument('-p', '--profile', type=str, default='IID',
                        help="Set profile for feed (default=IID)")
     parse.add_argument('-r', '--rlimit', type=int, default=100,
