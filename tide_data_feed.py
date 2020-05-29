@@ -23,7 +23,7 @@
 
  Author: Chris Marrison
 
- Date Last Updated: 20200415
+ Date Last Updated: 20200429
 
  .. todo::
     * Alternate feed formats
@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '0.8'
+__version__ = '0.9'
 __author__ = 'Chris Marrison'
 
 import os
@@ -71,42 +71,6 @@ import ibtidelib
 log = logging.getLogger(__name__)
 
 # ** Functions **
-
-
-def read_config(cfg_filename):
-    '''
-    Open and parse ini file
-
-    Parameters:
-        cfg_filename (str): name of inifile
-
-    Returns:
-        api_key (str): API Key for authentication
-
-    '''
-    cfg = configparser.ConfigParser()
-
-    # Attempt to read api_key from ini file
-    try:
-        cfg.read(cfg_filename)
-    except configparser.Error as err:
-        log.error(err)
-
-    # Look for TIDE section
-    if 'TIDE' in cfg:
-        # Check for api_key in TIDE section
-        if 'api_key' in cfg['TIDE']:
-            api_key = cfg['TIDE']['api_key'].strip("'\"")
-            log.debug('API Key Found in {}: {}'.format(cfg_filename, api_key))
-        else:
-            log.warning('No API key (api_key) variable in section TIDE.')
-            api_key = ''
-    else:
-        log.warning('No TIDE Section in config file: {}'.format(cfg_filename))
-        api_key = ''
-
-    return api_key
-
 
 def parseargs():
     '''
@@ -208,6 +172,8 @@ def main():
 
     '''
 
+    # Local variables
+    config = {}
     # Parse Arguments and configure
     args = parseargs()
 
@@ -231,7 +197,8 @@ def main():
     if args.apikey:
         apikey = args.apikey
     else:
-        apikey = read_config(configfile)
+        config = ibtidelib.read_tide_ini(configfile)
+        apikey = config['api_key']
     if apikey == '':
         log.error('API Key not set.')
     else:

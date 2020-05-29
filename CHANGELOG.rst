@@ -3,6 +3,7 @@ ChangeLog
 *********
 
 
+| 20200529    v0.9    Switch to ibtidelib.read_tide_ini
 | 20200415    v0.8    Fixed bug regarding default threat property
 | 20190607    v0.7    Corrected shutil exception handling
 | 20190605    v0.6    Added threatproperty option
