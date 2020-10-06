@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '0.9'
+__version__ = '1.0'
 __author__ = 'Chris Marrison'
 
 import os
@@ -66,6 +66,7 @@ import argparse
 import configparser
 import requests
 import ibtidelib
+import json
 
 # ** Global Variables **
 log = logging.getLogger(__name__)
@@ -99,6 +100,8 @@ def parseargs():
                        help="Set profile for feed (default=IID)")
     parse.add_argument('-r', '--rlimit', type=int, default=100,
                        help="Set limit for number of records (default=100)")
+    parse.add_argument('-i', '--iocsonly', action='store_true',
+                       help="Output IOCs only")
     parse.add_argument('-d', '--debug', action='store_true',
                        help="Enable debug messages")
 
@@ -164,6 +167,41 @@ def open_file(filename):
     return handler
 
 
+def output_iocs_only(rtext, outfile):
+    '''
+    Process rtext and output IOCs only to outfile
+
+    Parameters:
+        rtext: Data feed
+        outfile: filehandler
+    
+    '''
+    data = json.loads(rtext)
+    
+    if "threat" in data.keys():
+        for threat in data['threat']:
+            if threat['type'] == "HOST":
+                if outfile:
+                    print(threat['host'], file=outfile)
+                else:
+                    print(threat['host'])
+            elif threat['type'] == "IP":
+                if outfile:
+                    print(threat['ip'], file=outfile)
+                else:
+                    print(threat['ip'])
+            elif threat['type'] == "URL":
+                if outfile:
+                    print(threat['url'], file=outfile)
+                else:
+                    print(threat['url'])
+            else:
+                log.warn("Output invalid: {}".format(threat))
+    else:
+        print("No threats returned.")
+
+    return 
+
 def main():
     '''
     * Main *
@@ -171,7 +209,6 @@ def main():
     Core logic when running as script
 
     '''
-
     # Local variables
     config = {}
     # Parse Arguments and configure
@@ -186,6 +223,7 @@ def main():
     threatclass = args.threatclass
     threatproperty = args.threatproperty
     rlimit = str(args.rlimit)
+    iocsonly = args.iocsonly
 
     # Check config file
     if args.config:
@@ -220,23 +258,39 @@ def main():
                           threatclass,
                           threatproperty,
                           rlimit))
-        rcode, rtext = ibtidelib.tideactivefeed(feedtype,
+                        
+        if iocsonly:
+            rcode, rtext = ibtidelib.tideactivefeed(feedtype,
+                                                apikey,
+                                                profile=profile,
+                                                threatclass=threatclass,
+                                                threatproperty=threatproperty,
+                                                format="json",
+                                                rlimit=rlimit)
+            if rcode == requests.codes.ok:
+                output_iocs_only(rtext, outfile)
+            else:
+                print("Query Failed with response: {}".format(rcode))
+                print("Body response: {}".format(rtext))
+
+        else:
+            rcode, rtext = ibtidelib.tideactivefeed(feedtype,
                                                 apikey,
                                                 profile=profile,
                                                 threatclass=threatclass,
                                                 threatproperty=threatproperty,
                                                 format="csv",
                                                 rlimit=rlimit)
-        if rcode == requests.codes.ok:
-            if outfile:
-                log.info('Outputing feed to file {}'.format(outputfile))
-                print(rtext, file=outfile)
-                log.info('Output complete')
+            if rcode == requests.codes.ok:
+                if outfile:
+                    log.info('Outputing feed to file {}'.format(outputfile))
+                    print(rtext, file=outfile)
+                    log.info('Output complete')
+                else:
+                    print(rtext)
             else:
-                print(rtext)
-        else:
-            print("Query Failed with response: {}".format(rcode))
-            print("Body response: {}".format(rtext))
+                print("Query Failed with response: {}".format(rcode))
+                print("Body response: {}".format(rtext))
 
     return
 

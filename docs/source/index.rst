@@ -10,11 +10,16 @@ Welcome to tide_data_feed's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   intro
+   license
+   quickstart
+   code
+   version_history
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
+# * :ref:`modindex`
 * :ref:`search`
