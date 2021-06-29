@@ -7,7 +7,7 @@ provide demonstration scripts for BloxOne ThreatDefense. These can be used
 for API demonstrations, or help to simplify PoCs for Threat Intelligence, 
 demonstrating the value of TIDE and our threat intel offerings.
 
-The tide_data_feed.py script is designed to provide a simple demonstration of
+The b1td_tide_data_feed.py script is designed to provide a simple demonstration of
 generating a CSV export from TIDE 'active state' data.
 
 This documentation assumes that you have python3 installed and are familiar with 

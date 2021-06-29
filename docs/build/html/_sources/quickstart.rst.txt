@@ -2,11 +2,11 @@
 Quick Start Guide
 *****************
 
-The simplest place to start is to run the :mod:`tide_data_feed.py` Script
+The simplest place to start is to run the :mod:`b1td_tide_data_feed.py` Script
 with the -h or --help option to display the simple usage help text.::
 
-  $ ./tide_data_feed.py --help
-  usage: tide_data_feed.py [-h] [-o OUTPUT] [-c CONFIG] [-k APIKEY]
+  $ ./b1td_tide_data_feed.py --help
+  usage: b1td_tide_data_feed.py [-h] [-o OUTPUT] [-c CONFIG] 
                           [-f FEEDTYPE] [-t THREATCLASS] [-T THREATPROPERTY]
                           [-p PROFILE] [-r RLIMIT] [-i] [-d]
 
@@ -18,8 +18,6 @@ with the -h or --help option to display the simple usage help text.::
                           Output to <filename>
     -c CONFIG, --config CONFIG
                           Overide Config file
-    -k APIKEY, --apikey APIKEY
-                          Overide API Key
     -f FEEDTYPE, --feedtype FEEDTYPE
                           Specify feed type <host(default), ip, url>
     -t THREATCLASS, --threatclass THREATCLASS
@@ -38,13 +36,13 @@ Configuring the API Key
 ========================
 
 Although the script will accept your API Key as part of the command line using
-the --apikey / -k option, :mod:`tide_data_feed` supports the use of a config.ini file to store the API Key.
+the --apikey / -k option, :mod:`b1td_tide_data_feed` supports the use of a config.ini file to store the API Key.
 
 .. note::
   Using the --apikey/-k option overrides any API Key stored in
-  the ``config.ini``
+  the ``bloxone.ini``
 
-By default :mod:`tide_data_feed` will look for a ``config.ini`` file in the
+By default :mod:`b1td_tide_data_feed` will look for a ``config.ini`` file in the
 current working directory. An alternate ini file can be specified with the
 the --config/-c option. This allows you to call the script with alternative ini
 files as needed without the need to use the --apikey option to use alternate 
@@ -56,13 +54,17 @@ ini File Format
 A sample config.ini file is included with this package, however, the simple
 format is shown below::
 
-  [TIDE]
-  api_key = <your API Key Here>
+  [BloxOne]
+  url = 'https://csp.infoblox.com'
+  api_version = 'v1'
+  api_key = '<you API Key here>'
 
 Add you API Key from the portal to the :data:`api_key` property and save the
 file. An example, using a fictious key is shown::
 
-  [TIDE]
+  [BloxOne]
+  url = 'https://csp.infoblox.com'
+  api_version = 'v1'
   api_key = c3042afe88ea9a1a24b8fb220e203343a1e4ee08d1c8a00331594c802ad50a4c
 
 Once this step is complete you will not have to use the --apikey / -k option
@@ -76,13 +78,13 @@ any options using the defaults, to generate 100 CSV lines of type HOST and using
 as the profile displayed on screen.
 
 ::
-  $ ./tide_data_feed.py
+  $ ./b1td_tide_data_feed.py
 
 This can easily be sent to a file using the --output <filename> option::
 
-  $ ./tide_data_feed.py --output mydatafeed.csv
+  $ ./b1td_tide_data_feed.py --output mydatafeed.csv
 
 It is also possible to output only the IOCs without the metadata using the 
 --iocsonly option::
 
-  $ ./tide_data_feed.py -c config.ini --iocsonly --output mydatafeed.txt
+  $ ./b1td_tide_data_feed.py -c config.ini --iocsonly --output mydatafeed.txt

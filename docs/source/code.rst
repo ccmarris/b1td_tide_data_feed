@@ -2,5 +2,5 @@
 Source Documentation
 ====================
 
-.. automodule:: tide_data_feed
+.. automodule:: b1td_tide_data_feed
    :members:
