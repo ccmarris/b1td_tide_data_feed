@@ -4,10 +4,10 @@
 ------------------------------------------------------------------------
 
  Description:
-  Sample script using ibtidelib to create a CSV feed from TIDE
+  Sample script using BloxOne Threat Defense to create a CSV feed from TIDE
 
  Requirements:
-  Requires ibtidelib, requests
+  Requires bloxone
 
  Usage:
     tide_csv_feed.py [options]
@@ -23,12 +23,12 @@
 
  Author: Chris Marrison
 
- Date Last Updated: 20200429
+ Date Last Updated: 20210629
 
  .. todo::
     * Alternate feed formats
 
-Copyright 2019 Chris Marrison / Infoblox
+Copyright 2021 Chris Marrison / Infoblox
 
 Redistribution and use in source and binary forms,
 with or without modification, are permitted provided
@@ -56,17 +56,15 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '1.0'
+__version__ = '2.0'
 __author__ = 'Chris Marrison'
 
+import bloxone
 import os
 import shutil
 import logging
 import argparse
 import configparser
-import requests
-import ibtidelib
-import json
 
 # ** Global Variables **
 log = logging.getLogger(__name__)
@@ -85,11 +83,9 @@ def parseargs():
     '''
     parse = argparse.ArgumentParser(description='Simple TIDE data feed example')
     parse.add_argument('-o', '--output', type=str,
-                       help="Output to <filename>")
-    parse.add_argument('-c', '--config', type=str, default='config.ini',
+                       help="Output to <filename>", default="")
+    parse.add_argument('-c', '--config', type=str, default='bloxone.ini',
                        help="Overide Config file")
-    parse.add_argument('-k', '--apikey', type=str,
-                       help="Overide API Key")
     parse.add_argument('-f', '--feedtype', type=str, default='host',
                        help="Specify feed type <host(default), ip, url>")
     parse.add_argument('-t', '--threatclass', type=str,
@@ -167,17 +163,15 @@ def open_file(filename):
     return handler
 
 
-def output_iocs_only(rtext, outfile):
+def output_iocs_only(data, outfile):
     '''
     Process rtext and output IOCs only to outfile
 
     Parameters:
-        rtext: Data feed
+        data: Data feed
         outfile: filehandler
     
     '''
-    data = json.loads(rtext)
-    
     if "threat" in data.keys():
         for threat in data['threat']:
             if threat['type'] == "HOST":
@@ -202,6 +196,60 @@ def output_iocs_only(rtext, outfile):
 
     return 
 
+
+def output_csv(data, outfile):
+    '''
+    Output JSON as CSV
+
+    Parameters:
+        rtext: Data feed
+        outfile: filehandler
+    '''
+    csvrow = ""
+    csvheader = ""
+    csvrow = ""
+
+    headers = [ 'type', 'host', 'domain', 'tld', 'profile', 'property', 
+               'class', 'threat_level', 'confidence', 'detected', 'received', 
+               'imported', 'expiration', 'dga', 'up', 'confidence_score', 
+               'confidence_score_rating' ]
+    
+    # Build Header String
+    for item in headers:
+        csvheader += item + ','
+
+    # Trim final comma
+    csvheader = csvheader[:-1]
+
+    # Output CSV Header
+    if outfile:
+        print(csvheader, file=outfile)
+    else:
+        print(csvheader)
+    
+    # Ootput CSV Data
+    if 'threat' in data.json().keys():
+        for t in data.json()['threat']:
+            csvrow = ""
+            # Build CSV Row
+            for column in headers:
+                if column in t.keys():
+                    csvrow += str(t[column]) + ','
+                else:
+                    csvrow += ','
+            csvrow = csvrow[:-1]
+
+            if outfile:
+                print(csvrow, file=outfile)
+            else:
+                print(csvrow)
+                
+    else:
+        print("No threats returned.")
+
+    return
+
+
 def main():
     '''
     * Main *
@@ -216,6 +264,7 @@ def main():
 
     # Set up logging
     debug = args.debug
+    configfile = args.config
     setup_logging(debug)
     outputfile = args.output
     feedtype = args.feedtype
@@ -225,72 +274,52 @@ def main():
     rlimit = str(args.rlimit)
     iocsonly = args.iocsonly
 
-    # Check config file
-    if args.config:
-        configfile = args.config
-    else:
-        configfile = 'config.ini'
 
-    # Set API Key
-    if args.apikey:
-        apikey = args.apikey
-    else:
-        config = ibtidelib.read_tide_ini(configfile)
-        apikey = config['api_key']
-    if apikey == '':
-        log.error('API Key not set.')
-    else:
-        # Assume API Key was set and continue
+    # Initialise bloxone
+    b1td = bloxone.b1td(configfile)
 
-        # Set up output file
-        if outputfile:
-            outfile = open_file(outputfile)
-            if not outfile:
-                log.error('Failed to open output file for CSV.')
+    # Set up output file
+    if outputfile:
+        outfile = open_file(outputfile)
+        if not outfile:
+            log.error('Failed to open output file for CSV.')
+    else:
+        outfile = False
+
+    # CSV Data Feed Example
+    log.debug('Requesting {} feed, using profile={}, threatclass={},'
+                'threatproperty={}, rlimit={}'
+                .format(feedtype,
+                        profile,
+                        threatclass,
+                        threatproperty,
+                        rlimit))
+                    
+    if iocsonly:
+        response = b1td.tideactivefeed(feedtype,
+                                        profile=profile,
+                                        threatclass=threatclass,
+                                        threatproperty=threatproperty,
+                                        rlimit=rlimit)
+    if response.status_code in b1td.return_codes_ok:
+            output_iocs_only(response.json(), outfile)
         else:
-            outfile = False
+            print("Query Failed with response: {}".format(response.status_code))
+            print("Body response: {}".format(response.text))
 
-        # CSV Data Feed Example
-        log.debug('Requesting {} feed, using profile={}, threatclass={},'
-                  'threatproperty={}, rlimit={}'
-                  .format(feedtype,
-                          profile,
-                          threatclass,
-                          threatproperty,
-                          rlimit))
-                        
-        if iocsonly:
-            rcode, rtext = ibtidelib.tideactivefeed(feedtype,
-                                                apikey,
-                                                profile=profile,
-                                                threatclass=threatclass,
-                                                threatproperty=threatproperty,
-                                                format="json",
-                                                rlimit=rlimit)
-            if rcode == requests.codes.ok:
-                output_iocs_only(rtext, outfile)
-            else:
-                print("Query Failed with response: {}".format(rcode))
-                print("Body response: {}".format(rtext))
-
+    else:
+        response = b1td.tideactivefeed(feedtype,
+                                        profile=profile,
+                                        threatclass=threatclass,
+                                        threatproperty=threatproperty,
+                                        rlimit=rlimit)
+    if response.status_code in b1td.return_codes_ok:
+                log.info('Outputing feed to file {}'.format(outputfile))
+                output_csv(response, outfile=outfile)
+                log.info('Output complete')
         else:
-            rcode, rtext = ibtidelib.tideactivefeed(feedtype,
-                                                apikey,
-                                                profile=profile,
-                                                threatclass=threatclass,
-                                                threatproperty=threatproperty,
-                                                format="csv",
-                                                rlimit=rlimit)
-            if rcode == requests.codes.ok:
-                if outfile:
-                    log.info('Outputing feed to file {}'.format(outputfile))
-                    print(rtext, file=outfile)
-                    log.info('Output complete')
-                else:
-                    print(rtext)
-            else:
-                print("Query Failed with response: {}".format(rcode))
-                print("Body response: {}".format(rtext))
+            print("Query Failed with response: {}".format(response.status_code))
+            print("Body response: {}".format(response.text))
 
     return
 

@@ -3,6 +3,7 @@ ChangeLog
 *********
 
 
+| 20210629    v2.0    Converted to use B1TD for API using bloxone module
 | 20201006    v1.0    Created option to output IOCs only
 | 20200529    v0.9    Switch to ibtidelib.read_tide_ini
 | 20200415    v0.8    Fixed bug regarding default threat property
