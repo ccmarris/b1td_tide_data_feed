@@ -2,6 +2,9 @@
 Quick Start Guide
 *****************
 
+.. note::
+  For full documentation, please see the docs directory.
+
 Requirements
 ============
 

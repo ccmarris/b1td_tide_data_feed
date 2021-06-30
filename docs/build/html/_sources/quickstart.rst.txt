@@ -2,6 +2,19 @@
 Quick Start Guide
 *****************
 
+Requirements
+============
+
+This script requires Python 3.x and utilises the bloxone python module. 
+
+The :mod:'bloxone' module can be install using pip::
+
+  pip3 install bloxone
+
+
+Usage
+=====
+
 The simplest place to start is to run the :mod:`b1td_tide_data_feed.py` Script
 with the -h or --help option to display the simple usage help text.::
 
