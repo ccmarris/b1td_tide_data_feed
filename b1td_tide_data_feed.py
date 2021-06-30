@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '2.0'
+__version__ = '2.1'
 __author__ = 'Chris Marrison'
 
 import bloxone
@@ -301,8 +301,8 @@ def main():
                                         threatclass=threatclass,
                                         threatproperty=threatproperty,
                                         rlimit=rlimit)
-    if response.status_code in b1td.return_codes_ok:
-            output_iocs_only(response.json(), outfile)
+        if response.status_code in b1td.return_codes_ok:
+                output_iocs_only(response.json(), outfile)
         else:
             print("Query Failed with response: {}".format(response.status_code))
             print("Body response: {}".format(response.text))
@@ -313,7 +313,7 @@ def main():
                                         threatclass=threatclass,
                                         threatproperty=threatproperty,
                                         rlimit=rlimit)
-    if response.status_code in b1td.return_codes_ok:
+        if response.status_code in b1td.return_codes_ok:
                 log.info('Outputing feed to file {}'.format(outputfile))
                 output_csv(response, outfile=outfile)
                 log.info('Output complete')
