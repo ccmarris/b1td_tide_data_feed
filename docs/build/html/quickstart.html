@@ -215,20 +215,20 @@ optional arguments:
 <div class="section" id="configuring-the-api-key">
 <h2>Configuring the API Key<a class="headerlink" href="#configuring-the-api-key" title="Permalink to this headline">¶</a></h2>
 <p>Although the script will accept your API Key as part of the command line using
-the –apikey / -k option, <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> supports the use of a config.ini file to store the API Key.</p>
+the –apikey / -k option, <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> supports the use of a bloxone.ini file to store the API Key.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Using the –apikey/-k option overrides any API Key stored in
 the <code class="docutils literal notranslate"><span class="pre">bloxone.ini</span></code></p>
 </div>
-<p>By default <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> will look for a <code class="docutils literal notranslate"><span class="pre">config.ini</span></code> file in the
+<p>By default <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> will look for a <code class="docutils literal notranslate"><span class="pre">bloxone.ini</span></code> file in the
 current working directory. An alternate ini file can be specified with the
 the –config/-c option. This allows you to call the script with alternative ini
 files as needed without the need to use the –apikey option to use alternate
 authentication credentials.</p>
 <div class="section" id="ini-file-format">
 <h3>ini File Format<a class="headerlink" href="#ini-file-format" title="Permalink to this headline">¶</a></h3>
-<p>A sample config.ini file is included with this package, however, the simple
+<p>A sample bloxone.ini file is included with this package, however, the simple
 format is shown below:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BloxOne</span><span class="p">]</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://csp.infoblox.com&#39;</span>
@@ -250,7 +250,7 @@ unless you specifically want to override the configured key.</p>
 </div>
 <div class="section" id="simple-examples">
 <h2>Simple Examples<a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h2>
-<p>Once the <code class="xref py py-data docutils literal notranslate"><span class="pre">api_key</span></code> is defined in the config.ini the script can be run without
+<p>Once the <code class="xref py py-data docutils literal notranslate"><span class="pre">api_key</span></code> is defined in the bloxone.ini the script can be run without
 any options using the defaults, to generate 100 CSV lines of type HOST and using IID
 as the profile displayed on screen.</p>
 <dl class="simple">
@@ -263,7 +263,7 @@ as the profile displayed on screen.</p>
 </div>
 <p>It is also possible to output only the IOCs without the metadata using the
 –iocsonly option:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./b1td_tide_data_feed.py -c config.ini --iocsonly --output mydatafeed.txt
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./b1td_tide_data_feed.py -c bloxone.ini --iocsonly --output mydatafeed.txt
 </pre></div>
 </div>
 </div>

@@ -49,13 +49,13 @@ Configuring the API Key
 ========================
 
 Although the script will accept your API Key as part of the command line using
-the --apikey / -k option, :mod:`b1td_tide_data_feed` supports the use of a config.ini file to store the API Key.
+the --apikey / -k option, :mod:`b1td_tide_data_feed` supports the use of a bloxone.ini file to store the API Key.
 
 .. note::
   Using the --apikey/-k option overrides any API Key stored in
   the ``bloxone.ini``
 
-By default :mod:`b1td_tide_data_feed` will look for a ``config.ini`` file in the
+By default :mod:`b1td_tide_data_feed` will look for a ``bloxone.ini`` file in the
 current working directory. An alternate ini file can be specified with the
 the --config/-c option. This allows you to call the script with alternative ini
 files as needed without the need to use the --apikey option to use alternate 
@@ -64,7 +64,7 @@ authentication credentials.
 ini File Format
 ---------------
 
-A sample config.ini file is included with this package, however, the simple
+A sample bloxone.ini file is included with this package, however, the simple
 format is shown below::
 
   [BloxOne]
@@ -86,7 +86,7 @@ unless you specifically want to override the configured key.
 Simple Examples
 ===============
 
-Once the :data:`api_key` is defined in the config.ini the script can be run without
+Once the :data:`api_key` is defined in the bloxone.ini the script can be run without
 any options using the defaults, to generate 100 CSV lines of type HOST and using IID 
 as the profile displayed on screen.
 
@@ -100,4 +100,4 @@ This can easily be sent to a file using the --output <filename> option::
 It is also possible to output only the IOCs without the metadata using the 
 --iocsonly option::
 
-  $ ./b1td_tide_data_feed.py -c config.ini --iocsonly --output mydatafeed.txt
+  $ ./b1td_tide_data_feed.py -c bloxone.ini --iocsonly --output mydatafeed.txt
