@@ -7,7 +7,7 @@ Requirements
 
 This script requires Python 3.x and utilises the bloxone python module. 
 
-The :mod:'bloxone' module can be install using pip::
+The :mod:`bloxone` module can be install using pip::
 
   pip3 install bloxone
 
@@ -18,10 +18,8 @@ Usage
 The simplest place to start is to run the :mod:`b1td_tide_data_feed.py` Script
 with the -h or --help option to display the simple usage help text.::
 
-  $ ./b1td_tide_data_feed.py --help
-  usage: b1td_tide_data_feed.py [-h] [-o OUTPUT] [-c CONFIG] 
-                          [-f FEEDTYPE] [-t THREATCLASS] [-T THREATPROPERTY]
-                          [-p PROFILE] [-r RLIMIT] [-i] [-d]
+  usage: b1td_tide_data_feed.py [-h] [-o OUTPUT] [-c CONFIG] [-f FEEDTYPE] [-t THREATCLASS] [-T THREATPROPERTY] [-p PROFILE] [-r RLIMIT] [-d]
+                                [-i | -v]
 
   Simple TIDE data feed example
 
@@ -32,7 +30,7 @@ with the -h or --help option to display the simple usage help text.::
     -c CONFIG, --config CONFIG
                           Overide Config file
     -f FEEDTYPE, --feedtype FEEDTYPE
-                          Specify feed type <host(default), ip, url>
+                          Specify feed type <host(default), ip, url, email, hash>
     -t THREATCLASS, --threatclass THREATCLASS
                           Specify Threat Class for feed
     -T THREATPROPERTY, --threatproperty THREATPROPERTY
@@ -41,19 +39,17 @@ with the -h or --help option to display the simple usage help text.::
                           Set profile for feed (default=IID)
     -r RLIMIT, --rlimit RLIMIT
                           Set limit for number of records (default=100)
-    -i, --iocsonly        Output IOCs only
     -d, --debug           Enable debug messages
+    -i, --iocsonly        Output IOCs only
+    -v, --raw_csv         Output complete native CSV output
 
 
 Configuring the API Key
 ========================
 
-Although the script will accept your API Key as part of the command line using
-the --apikey / -k option, :mod:`b1td_tide_data_feed` supports the use of a bloxone.ini file to store the API Key.
 
-.. note::
-  Using the --apikey/-k option overrides any API Key stored in
-  the ``bloxone.ini``
+The :mod:`b1td_tide_data_feed` supports the use of a bloxone.ini file to store the API Key
+as specified in the :mod:`bloxone` module.
 
 By default :mod:`b1td_tide_data_feed` will look for a ``bloxone.ini`` file in the
 current working directory. An alternate ini file can be specified with the
@@ -92,6 +88,10 @@ as the profile displayed on screen.
 
 ::
   $ ./b1td_tide_data_feed.py
+
+You can specify an alternate ini file using the -c/--config option, for example::
+
+  $ ./b1td_tide_data_feed.py --config ~/inifile/myini.ini
 
 This can easily be sent to a file using the --output <filename> option::
 

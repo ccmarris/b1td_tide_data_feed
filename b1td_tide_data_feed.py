@@ -10,23 +10,11 @@
   Requires bloxone
 
  Usage:
-    tide_csv_feed.py [options]
-        -h  help
-        -o  <file> Output file
-        -k  <key> TIDE apikey
-        -f  <host,ip,url> feedtype
-        -p  <profile>
-        -t  <threatclass>
-        -T  <threatproperty>
-        -r  <rlimit> max number of records
-        -d  debug output
+    Use b1td_tide_csv_feed.py --help for details on options
 
  Author: Chris Marrison
 
- Date Last Updated: 20210630
-
- .. todo::
-    * Alternate feed formats
+ Date Last Updated: 20210701
 
 Copyright 2021 Chris Marrison / Infoblox
 
@@ -56,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ------------------------------------------------------------------------
 """
-__version__ = '2.1'
+__version__ = '2.5'
 __author__ = 'Chris Marrison'
 
 import bloxone
@@ -64,7 +52,6 @@ import os
 import shutil
 import logging
 import argparse
-import configparser
 
 # ** Global Variables **
 log = logging.getLogger(__name__)
@@ -82,12 +69,13 @@ def parseargs():
         Returns parsed arguments
     '''
     parse = argparse.ArgumentParser(description='Simple TIDE data feed example')
+    group = parse.add_mutually_exclusive_group()
     parse.add_argument('-o', '--output', type=str,
                        help="Output to <filename>", default="")
     parse.add_argument('-c', '--config', type=str, default='bloxone.ini',
                        help="Overide Config file")
     parse.add_argument('-f', '--feedtype', type=str, default='host',
-                       help="Specify feed type <host(default), ip, url>")
+                       help="Specify feed type <host(default), ip, url, email, hash>")
     parse.add_argument('-t', '--threatclass', type=str,
                        help="Specify Threat Class for feed")
     parse.add_argument('-T', '--threatproperty', type=str,
@@ -96,10 +84,12 @@ def parseargs():
                        help="Set profile for feed (default=IID)")
     parse.add_argument('-r', '--rlimit', type=int, default=100,
                        help="Set limit for number of records (default=100)")
-    parse.add_argument('-i', '--iocsonly', action='store_true',
-                       help="Output IOCs only")
     parse.add_argument('-d', '--debug', action='store_true',
                        help="Enable debug messages")
+    group.add_argument('-i', '--iocsonly', action='store_true',
+                       help="Output IOCs only")
+    group.add_argument('-v', '--raw_csv', action='store_true',
+                       help="Output complete native CSV output")
 
     return parse.parse_args()
 
@@ -163,7 +153,7 @@ def open_file(filename):
     return handler
 
 
-def output_iocs_only(data, outfile):
+def output_iocs_only(data, outfile=None):
     '''
     Process rtext and output IOCs only to outfile
 
@@ -197,7 +187,7 @@ def output_iocs_only(data, outfile):
     return 
 
 
-def output_csv(data, outfile):
+def output_csv(data, outfile=None, raw=False):
     '''
     Output JSON as CSV
 
@@ -214,38 +204,50 @@ def output_csv(data, outfile):
                'imported', 'expiration', 'dga', 'up', 'confidence_score', 
                'confidence_score_rating' ]
     
-    # Build Header String
-    for item in headers:
-        csvheader += item + ','
-
-    # Trim final comma
-    csvheader = csvheader[:-1]
-
-    # Output CSV Header
-    if outfile:
-        print(csvheader, file=outfile)
+    if raw:
+        if outfile:
+            log.debug(f'Outputting raw (csv) data to file: {outfile}')
+            print(data.text, file=outfile)
+        else:
+            log.debug(f'Outputting raw (csv) data to stdout')
+            print(data.text)
     else:
-        print(csvheader)
-    
-    # Ootput CSV Data
-    if 'threat' in data.json().keys():
-        for t in data.json()['threat']:
-            csvrow = ""
-            # Build CSV Row
-            for column in headers:
-                if column in t.keys():
-                    csvrow += str(t[column]) + ','
+        log.debug('Building simplified CSV from JSON dataset')
+        # Build Header String
+        for item in headers:
+            csvheader += item + ','
+
+        # Trim final comma
+        csvheader = csvheader[:-1]
+
+        # Output CSV Header
+        if outfile:
+            log.debug(f'Outputting header data to file: {outfile}')
+            print(csvheader, file=outfile)
+        else:
+            log.debug(f'Outputting header data to stdout')
+            print(csvheader)
+        
+        # Ootput CSV Data
+        log.debug('Generating simple CSV rows')
+        if 'threat' in data.json().keys():
+            for t in data.json()['threat']:
+                csvrow = ""
+                # Build CSV Row
+                for column in headers:
+                    if column in t.keys():
+                        csvrow += str(t[column]) + ','
+                    else:
+                        csvrow += ','
+                csvrow = csvrow[:-1]
+
+                if outfile:
+                    print(csvrow, file=outfile)
                 else:
-                    csvrow += ','
-            csvrow = csvrow[:-1]
-
-            if outfile:
-                print(csvrow, file=outfile)
-            else:
-                print(csvrow)
-                
-    else:
-        print("No threats returned.")
+                    print(csvrow)
+                    
+        else:
+            print("No threats returned.")
 
     return
 
@@ -258,7 +260,7 @@ def main():
 
     '''
     # Local variables
-    config = {}
+    exitcode = 0
     # Parse Arguments and configure
     args = parseargs()
 
@@ -273,6 +275,7 @@ def main():
     threatproperty = args.threatproperty
     rlimit = str(args.rlimit)
     iocsonly = args.iocsonly
+    raw_csv = args.raw_csv
 
 
     # Initialise bloxone
@@ -295,39 +298,43 @@ def main():
                         threatproperty,
                         rlimit))
                     
-    if iocsonly:
+    if raw_csv:
+        log.debug('API request for CSV data format')
         response = b1td.tideactivefeed(feedtype,
-                                        profile=profile,
-                                        threatclass=threatclass,
-                                        threatproperty=threatproperty,
-                                        rlimit=rlimit)
-        if response.status_code in b1td.return_codes_ok:
-                output_iocs_only(response.json(), outfile)
+                                    profile=profile,
+                                    threatclass=threatclass,
+                                    threatproperty=threatproperty,
+                                    rlimit=rlimit,
+                                    data_format="csv")
+    else:
+        log.debug('API request for native JSON data format')
+        response = b1td.tideactivefeed(feedtype,
+                                    profile=profile,
+                                    threatclass=threatclass,
+                                    threatproperty=threatproperty,
+                                    rlimit=rlimit)
+
+    if response.status_code in b1td.return_codes_ok:
+        log.info('Outputing feed to file {}'.format(outputfile))
+
+        # Check for iocsonly
+        if iocsonly:
+            output_iocs_only(response.json(), outfile)
         else:
-            print("Query Failed with response: {}".format(response.status_code))
-            print("Body response: {}".format(response.text))
+            output_csv(response, outfile=outfile, raw=raw_csv)
+        log.info('Output complete')
 
     else:
-        response = b1td.tideactivefeed(feedtype,
-                                        profile=profile,
-                                        threatclass=threatclass,
-                                        threatproperty=threatproperty,
-                                        rlimit=rlimit)
-        if response.status_code in b1td.return_codes_ok:
-                log.info('Outputing feed to file {}'.format(outputfile))
-                output_csv(response, outfile=outfile)
-                log.info('Output complete')
-        else:
-            print("Query Failed with response: {}".format(response.status_code))
-            print("Body response: {}".format(response.text))
+        print("Query Failed with response: {}".format(response.status_code))
+        print("Body response: {}".format(response.text))
+        exitcode = 1
 
-    return
+    return exitcode
 
 
 # ** Main **
 if __name__ == '__main__':
-    # exitcode = main()
-    # raise SystemExit(exitcode)
-    main()
+    exitcode = main()
+    raise SystemExit(exitcode)
 
 # ** End Main **

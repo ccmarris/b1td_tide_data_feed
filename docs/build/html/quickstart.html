@@ -175,7 +175,7 @@
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>This script requires Python 3.x and utilises the bloxone python module.</p>
-<p>The :mod:’bloxone’ module can be install using pip:</p>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">bloxone</span></code> module can be install using pip:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">bloxone</span>
 </pre></div>
 </div>
@@ -184,43 +184,37 @@
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>The simplest place to start is to run the <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed.py</span></code> Script
 with the -h or –help option to display the simple usage help text.:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./b1td_tide_data_feed.py --help
-usage: b1td_tide_data_feed.py [-h] [-o OUTPUT] [-c CONFIG]
-                        [-f FEEDTYPE] [-t THREATCLASS] [-T THREATPROPERTY]
-                        [-p PROFILE] [-r RLIMIT] [-i] [-d]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">b1td_tide_data_feed</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">CONFIG</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FEEDTYPE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">THREATCLASS</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">T</span> <span class="n">THREATPROPERTY</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PROFILE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">RLIMIT</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span>
+                              <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="o">|</span> <span class="o">-</span><span class="n">v</span><span class="p">]</span>
 
-Simple TIDE data feed example
+<span class="n">Simple</span> <span class="n">TIDE</span> <span class="n">data</span> <span class="n">feed</span> <span class="n">example</span>
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTPUT, --output OUTPUT
-                        Output to &lt;filename&gt;
-  -c CONFIG, --config CONFIG
-                        Overide Config file
-  -f FEEDTYPE, --feedtype FEEDTYPE
-                        Specify feed type &lt;host(default), ip, url&gt;
-  -t THREATCLASS, --threatclass THREATCLASS
-                        Specify Threat Class for feed
-  -T THREATPROPERTY, --threatproperty THREATPROPERTY
-                        Specify Threat Property for feed
-  -p PROFILE, --profile PROFILE
-                        Set profile for feed (default=IID)
-  -r RLIMIT, --rlimit RLIMIT
-                        Set limit for number of records (default=100)
-  -i, --iocsonly        Output IOCs only
-  -d, --debug           Enable debug messages
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span> <span class="n">OUTPUT</span>
+                        <span class="n">Output</span> <span class="n">to</span> <span class="o">&lt;</span><span class="n">filename</span><span class="o">&gt;</span>
+  <span class="o">-</span><span class="n">c</span> <span class="n">CONFIG</span><span class="p">,</span> <span class="o">--</span><span class="n">config</span> <span class="n">CONFIG</span>
+                        <span class="n">Overide</span> <span class="n">Config</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">f</span> <span class="n">FEEDTYPE</span><span class="p">,</span> <span class="o">--</span><span class="n">feedtype</span> <span class="n">FEEDTYPE</span>
+                        <span class="n">Specify</span> <span class="n">feed</span> <span class="nb">type</span> <span class="o">&lt;</span><span class="n">host</span><span class="p">(</span><span class="n">default</span><span class="p">),</span> <span class="n">ip</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="nb">hash</span><span class="o">&gt;</span>
+  <span class="o">-</span><span class="n">t</span> <span class="n">THREATCLASS</span><span class="p">,</span> <span class="o">--</span><span class="n">threatclass</span> <span class="n">THREATCLASS</span>
+                        <span class="n">Specify</span> <span class="n">Threat</span> <span class="n">Class</span> <span class="k">for</span> <span class="n">feed</span>
+  <span class="o">-</span><span class="n">T</span> <span class="n">THREATPROPERTY</span><span class="p">,</span> <span class="o">--</span><span class="n">threatproperty</span> <span class="n">THREATPROPERTY</span>
+                        <span class="n">Specify</span> <span class="n">Threat</span> <span class="n">Property</span> <span class="k">for</span> <span class="n">feed</span>
+  <span class="o">-</span><span class="n">p</span> <span class="n">PROFILE</span><span class="p">,</span> <span class="o">--</span><span class="n">profile</span> <span class="n">PROFILE</span>
+                        <span class="n">Set</span> <span class="n">profile</span> <span class="k">for</span> <span class="n">feed</span> <span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">IID</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">r</span> <span class="n">RLIMIT</span><span class="p">,</span> <span class="o">--</span><span class="n">rlimit</span> <span class="n">RLIMIT</span>
+                        <span class="n">Set</span> <span class="n">limit</span> <span class="k">for</span> <span class="n">number</span> <span class="n">of</span> <span class="n">records</span> <span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+  <span class="o">-</span><span class="n">d</span><span class="p">,</span> <span class="o">--</span><span class="n">debug</span>           <span class="n">Enable</span> <span class="n">debug</span> <span class="n">messages</span>
+  <span class="o">-</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="n">iocsonly</span>        <span class="n">Output</span> <span class="n">IOCs</span> <span class="n">only</span>
+  <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="o">--</span><span class="n">raw_csv</span>         <span class="n">Output</span> <span class="n">complete</span> <span class="n">native</span> <span class="n">CSV</span> <span class="n">output</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="configuring-the-api-key">
 <h2>Configuring the API Key<a class="headerlink" href="#configuring-the-api-key" title="Permalink to this headline">¶</a></h2>
-<p>Although the script will accept your API Key as part of the command line using
-the –apikey / -k option, <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> supports the use of a bloxone.ini file to store the API Key.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Using the –apikey/-k option overrides any API Key stored in
-the <code class="docutils literal notranslate"><span class="pre">bloxone.ini</span></code></p>
-</div>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> supports the use of a bloxone.ini file to store the API Key
+as specified in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">bloxone</span></code> module.</p>
 <p>By default <code class="xref py py-mod docutils literal notranslate"><span class="pre">b1td_tide_data_feed</span></code> will look for a <code class="docutils literal notranslate"><span class="pre">bloxone.ini</span></code> file in the
 current working directory. An alternate ini file can be specified with the
 the –config/-c option. This allows you to call the script with alternative ini
@@ -257,6 +251,10 @@ as the profile displayed on screen.</p>
 <dt>::</dt><dd><p>$ ./b1td_tide_data_feed.py</p>
 </dd>
 </dl>
+<p>You can specify an alternate ini file using the -c/–config option, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./b1td_tide_data_feed.py --config ~/inifile/myini.ini
+</pre></div>
+</div>
 <p>This can easily be sent to a file using the –output &lt;filename&gt; option:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./b1td_tide_data_feed.py --output mydatafeed.csv
 </pre></div>
